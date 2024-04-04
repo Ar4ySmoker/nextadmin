@@ -14,6 +14,7 @@ const AddUserPage = () => {
           required
         />
         <input type="phone" placeholder="phone" name="phone" />
+        <input type="text" placeholder="document" name="document"  />
         <select name="isAdmin" id="isAdmin">
           <option value={false}>
             Is Admin?
@@ -34,6 +35,7 @@ const AddUserPage = () => {
           rows="16"
           placeholder="Address"
         ></textarea>
+
         <button type="submit">Submit</button>
       </form>
     </div>

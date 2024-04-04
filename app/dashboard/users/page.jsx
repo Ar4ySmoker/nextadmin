@@ -28,6 +28,7 @@ const UsersPage = async ({ searchParams }) => {
             <td>Role</td>
             <td>Status</td>
             <td>Action</td>
+            <td>Document</td>
           </tr>
         </thead>
         <tbody>
@@ -45,10 +46,11 @@ const UsersPage = async ({ searchParams }) => {
                   {user.username}
                 </div>
               </td>
-              <td>{user.email}</td>
+              <td>{user.document}</td>
               <td>{user.createdAt?.toString().slice(4, 16)}</td>
               <td>{user.isAdmin ? "Admin" : "Client"}</td>
               <td>{user.isActive ? "active" : "passive"}</td>
+              <td>{user.document}</td>
               <td>
                 <div className={styles.buttons}>
                   <Link href={`/dashboard/users/${user.id}`}>
