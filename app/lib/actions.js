@@ -39,7 +39,7 @@ export const addUser = async (formData) => {
 };
 
 export const updateUser = async (formData) => {
-  const { id, username, email, password, phone, address,document , isAdmin, isActive } =
+  const { id, username, email, password, phone, address, document , isAdmin, isActive } =
     Object.fromEntries(formData);
 
   try {
