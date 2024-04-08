@@ -24,6 +24,9 @@ const userSchema = new mongoose.Schema(
     document: {
       type: String,
     },
+    comment:{
+      type:String,
+    },
     isAdmin: {
       type: Boolean,
       default: false,
@@ -75,7 +78,32 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+const candidateSchema = new mongoose.Schema({
+  name: {
+type: String,
+  },
+  phone:{
+    type: String,
+    required: true,
+    unique: true,
+  },
+  location: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Location'
+  }
+  
+}
+)
 
+const locationSchema = new mongoose.Schema({
+  name: {
+type: String,
+unique: true,
+  }
+}
+)
 
 export const User = mongoose.models.User || mongoose.model("User", userSchema);
 export const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
+export const Location = mongoose.models.Location || mongoose.model("Location", locationSchema);
+export const Candidate = mongoose.models.Candidate || mongoose.model("Candidate", candidateSchema);

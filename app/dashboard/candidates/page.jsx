@@ -1,69 +1,68 @@
-import { deleteUser} from "@/app/lib/actions";
-import { fetchUsers } from "@/app/lib/data";
-import Pagination from "@/app/ui/dashboard/pagination/pagination";
-import Search from "@/app/ui/dashboard/search/search";
+import { fetchCandidates } from "../../lib/myData"; 
+import Pagination from "../../ui/dashboard/pagination/pagination";
+// import Search from "@/app/ui/dashboard/search/search";
 import styles from "@/app/ui/dashboard/users/users.module.css";
 import Image from "next/image";
 import Link from "next/link";
 
-const UsersPage = async ({ searchParams }) => {
+const CandidatesPage = async ({ searchParams }) => {
   const q = searchParams?.q || "";
   const page = searchParams?.page || 1;
-  const { count, users } = await fetchUsers(q, page);
+  const { count, candidates } = await fetchCandidates(q, page);
 
   return (
     <div className={styles.container}>
       <div className={styles.top}>
-        <Search placeholder="Search for a user..." />
-        <Link href="/dashboard/users/add">
-          <button className={styles.addButton}>Добавить</button>
+        {/* <Search placeholder="Search for a Candidates..." /> */}
+        <Link href="/dashboard/candidates/add">
+          <button className={styles.addButton}>Add New</button>
         </Link>
       </div>
       <table className={styles.table}>
         <thead>
           <tr>
-            <td>Имя</td>
+            <td>Name</td>
             <td>Email</td>
             <td>Created At</td>
-            <td>Роль</td>
-            <td>Статус</td>
-            <td>Действия</td>
-            <td>Документы</td>
+            <td>Role</td>
+            <td>Status</td>
+            <td>Action</td>
+            <td>Document</td>
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
+          {candidates.map((candidate) => (
+            <tr key={candidate.id}>
               <td>
                 <div className={styles.user}>
-                  <Image
+                  {/* <Image
                     src={user.img || "/noavatar.png"}
                     alt=""
                     width={40}
                     height={40}
                     className={styles.userImage}
-                  />
-                  {user.username}
+                  /> */}
+                  {candidate.name}
                 </div>
               </td>
-              <td>{user.comment}</td>
-              <td>{user.createdAt?.toString().slice(4, 16)}</td>
-              <td>{user.isAdmin ? "Admin" : "Client"}</td>
-              <td>{user.isActive ? "active" : "passive"}</td>
-              <td>{user.document}</td>
+              <td>{candidate.comment}</td>
+              <td>{candidate.createdAt?.toString().slice(4, 16)}</td>
+              <td>{candidate.location}</td>
+              <td>{candidate.isActive ? "active" : "passive"}</td>
+              <td>{candidate.document}</td>
               <td>
                 <div className={styles.buttons}>
-                  <Link href={`/dashboard/users/${user.id}`}>
+                  <Link href={`/dashboard/candidate/${candidate.id}`}>
                     <button className={`${styles.button} ${styles.view}`}>
                       View
                     </button>
                   </Link>
-                  <form action={deleteUser}>
+                  {/* <form action={deleteCandidate}>
                     <input type="hidden" name="id" value={(user.id)} />
                     <button className={`${styles.button} ${styles.delete}`}>
                       Delete
                     </button>
-                  </form>
+                  </form> */}
                 </div>
               </td>
             </tr>
@@ -75,4 +74,4 @@ const UsersPage = async ({ searchParams }) => {
   );
 };
 
-export default UsersPage;
+export default CandidatesPage;

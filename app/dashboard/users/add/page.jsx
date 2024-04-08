@@ -15,6 +15,8 @@ const AddUserPage = () => {
         />
         <input type="phone" placeholder="phone" name="phone" />
         <input type="text" placeholder="document" name="document"  />
+        <input type="text" placeholder="comment" name="comment"  />
+
         <select name="isAdmin" id="isAdmin">
           <option value={false}>
             Is Admin?

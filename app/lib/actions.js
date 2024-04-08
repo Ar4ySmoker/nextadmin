@@ -8,12 +8,11 @@ import bcrypt from "bcrypt";
 import { signIn } from "../auth";
 
 export const addUser = async (formData) => {
-  const { username, email, password, phone, address, document, isAdmin, isActive,  } =
+  const { username, email, password, phone, address, document,comment, isAdmin, isActive,  } =
     Object.fromEntries(formData);
 
   try {
     connectToDB();
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -24,11 +23,12 @@ export const addUser = async (formData) => {
       phone,
       address,
       document,
+      comment,
       isAdmin,
       isActive,
     });
 
-    await newUser.save();
+    await newUser.save(username,email,password,phone,address,document,comment,isAdmin,isActive);
   } catch (err) {
     console.log(err);
     throw new Error("Failed to create user!");
@@ -39,7 +39,7 @@ export const addUser = async (formData) => {
 };
 
 export const updateUser = async (formData) => {
-  const { id, username, email, password, phone, address, document , isAdmin, isActive } =
+  const { id, username, email, password, phone, address, document ,comment, isAdmin, isActive } =
     Object.fromEntries(formData);
 
   try {
@@ -51,6 +51,8 @@ export const updateUser = async (formData) => {
       password,
       phone,
       address,
+      document,
+      comment,
       document,
       isAdmin,
       isActive,

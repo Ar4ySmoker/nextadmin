@@ -92,7 +92,7 @@ const Sidebar = async () => {
         /> */}
         <div className={styles.userDetail}>
           {/* <span className={styles.username}>{user.username}</span> */}
-          <span className={styles.userTitle}>Administrator</span>
+          <span className={styles.userTitle}>Администратор</span>
         </div>
       </div>
       <ul className={styles.list}>

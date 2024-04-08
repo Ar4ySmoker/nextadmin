@@ -16,7 +16,7 @@ const ProductsPage = async ({ searchParams }) => {
       <div className={styles.top}>
         <Search placeholder="Search for a product..." />
         <Link href="/dashboard/products/add">
-          <button className={styles.addButton}>Add New</button>
+          <button className={styles.addButton}>Добавить</button>
         </Link>
       </div>
       <table className={styles.table}>
@@ -53,13 +53,13 @@ const ProductsPage = async ({ searchParams }) => {
                 <div className={styles.buttons}>
                   <Link href={`/dashboard/products/${product.id}`}>
                     <button className={`${styles.button} ${styles.view}`}>
-                      View
+                      Показать
                     </button>
                   </Link>
                   <form action={deleteProduct}>
                     <input type="hidden" name="id" value={product.id} />
                     <button className={`${styles.button} ${styles.delete}`}>
-                      Delete
+                      Удалить
                     </button>
                   </form>
                 </div>
