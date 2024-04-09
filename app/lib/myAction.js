@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache";
-import { Candidate, Product, User } from "./models";
+import { Candidate, } from "./models";
 import { connectToDB } from "./utils";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
@@ -14,9 +14,9 @@ try{
     const newCandidate = new Candidate({
         name,
         phone,
-        location
+        location,
     });
-    await newCandidate.save(name, phone, location);
+    await newCandidate.save();
 }catch (err){
     console.log(err);
     throw new Error("Failed to create Candidate")
