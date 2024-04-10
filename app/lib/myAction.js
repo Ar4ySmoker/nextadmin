@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { Candidate, } from "./models";
 import { connectToDB } from "./utils";
 import { redirect } from "next/navigation";
-import bcrypt from "bcrypt";
 
 export const addCandidate = async (formData) =>{
     const {name, phone, location} = Object.fromEntries(formData);
