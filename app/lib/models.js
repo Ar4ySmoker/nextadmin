@@ -88,6 +88,7 @@ type: String,
     unique: true,
   },
   location: {
+    name: {type: String},
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Location'
   }
