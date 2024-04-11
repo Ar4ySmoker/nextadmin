@@ -2,7 +2,12 @@ import styles from "@/app/ui/dashboard/users/addUser/addUser.module.css";
 import { LocationField, ProfessionField } from '@/app/lib/definitions'; 
 import { addCandidate } from "@/app/lib/myAction"
 
-export default function Form({ locations, professions }: { locations: LocationField[], professions: ProfessionField[]}) {
+export default function Form({ 
+  professions,
+  locations 
+  }: { 
+  locations: LocationField[], 
+  professions: ProfessionField[]}) {
   console.log("Locations:", locations);
   console.log("Professions:", professions);
   return (

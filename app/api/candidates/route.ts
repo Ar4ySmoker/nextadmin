@@ -18,14 +18,14 @@ return new NextResponse("error in fetch Candidates" + error, {status:500})
 export const POST = async (request) => {
     try {
         // Получаем данные из тела запроса
-        const { name, phone, location } = await request.json();
+        const { name, phone, location, professions } = await request.json();
         console.log("Data is compiled")
         // Подключаемся к базе данных
         await connectToDB();
         
         // Создаем нового кандидата в базе данных
         // const newCandidate = new Candidate({ name, phone, location });
-        await Candidate.create({ name, phone, location })
+        await Candidate.create({ name, phone, location, professions })
         console.log("Data is created")
         await mongoose.connection.close()
         return NextResponse.json({ message: "Message sent successfully" }, { status: 201 })

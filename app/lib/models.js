@@ -121,6 +121,6 @@ unique: true,
 export const User = mongoose.models.User || mongoose.model("User", userSchema);
 export const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
 export const Location = mongoose.models.Location || mongoose.model("Location", locationSchema);
-export const Profession = mongoose.models.Location || mongoose.model("Profession", professionSchema);
+export const Profession = mongoose.models.Profession || mongoose.model("Profession", professionSchema);
 
 export const Candidate = mongoose.models.Candidate || mongoose.model("Candidate", candidateSchema);

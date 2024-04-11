@@ -15,11 +15,12 @@ async function getData() {
   try {
     const candidatesRes = await fetch("http://localhost:3000/api/candidates");
     const locationsRes = await fetch("http://localhost:3000/api/locations");
-
-    if (!candidatesRes.ok || !locationsRes.ok) return notFound();
+    const professionsRes = await fetch("http://localhost:3000/api/profession")
+    if (!candidatesRes.ok || !locationsRes.ok || !professionsRes.ok) return notFound();
 
     const candidates = await candidatesRes.json();
     const locations = await locationsRes.json();
+    const professions = await professionsRes.json()
 
     // Создаем объект для быстрого доступа к данным о локациях по их _id
     const locationsMap = {};
@@ -27,9 +28,15 @@ async function getData() {
       locationsMap[location._id] = location.name;
     });
 
+    const professionsMap = {};
+    professions.forEach(profession =>{
+      professionsMap[profession._id] = profession.name;
+    })
+
     // Добавляем поле locationName к каждому кандидату
     candidates.forEach(candidate => {
       candidate.locationName = locationsMap[candidate.location] || "Не указано";
+      candidate.professionName = professionsMap[candidate.profession] || "Без профессии"
     });
 
     return candidates;
@@ -59,10 +66,10 @@ const data = await getData()
       <table className={styles.table}>
         <thead>
           <tr>
-            <td>Name</td>
-            <td>Email</td>
-            <td>Created At</td>
-            <td>Role</td>
+            <td>Имя</td>
+            <td>Телефон</td>
+            <td>Город</td>
+            <td>Профессия</td>
             <td>Status</td>
             <td>Action</td>
             <td>Document</td>
@@ -84,10 +91,10 @@ const data = await getData()
                 </div>
               </td>
               <td>{candidate.phone}</td>
-              <td>{candidate.createdAt?.toString().slice(4, 16)}</td>
               <td>{candidate.locationName}</td>
-              <td>{candidate.isActive ? "active" : "passive"}</td>
-              <td>{candidate.document}</td>
+              <td>{candidate.professionName}</td>
+              <td>{candidate.createdAt?.toString().slice(4, 16)}</td>
+              <td>{candidate.professionName}</td>
               <td>
                 <div className={styles.buttons}>
                   <Link href={`/dashboard/candidates/${candidate._id}`}>
