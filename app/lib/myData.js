@@ -1,5 +1,5 @@
 import { Candidate } from "./models";
-import { Location } from "./models";
+import { Location, Profession } from "./models";
 import { connectToDB } from "./utils";
 
 export const fetchCandidates = async (q, page) => {
@@ -31,5 +31,16 @@ return locations
     }catch(err){
 console.log(err)
 throw new Error("Failed to fetch Locations!^(")
+    }
+  }
+  export const fetchProfession = async () =>{
+    try{
+        connectToDB()
+        console.log("conected db")
+        const professions = await Profession.find({}, 'name')
+return professions
+    }catch(err){
+console.log(err)
+throw new Error("Failed to fetch Profession!^(")
     }
   }

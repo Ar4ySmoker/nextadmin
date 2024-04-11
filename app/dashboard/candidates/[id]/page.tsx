@@ -1,34 +1,15 @@
-import { updateCandidate } from "@/app/lib/myAction";
+import { Candidate } from "@/app/lib/models";
 import { fetchCandidates } from "@/app/lib/myData";
-import styles from "@/app/ui/dashboard/products/singleProduct/singleProduct.module.css";
-import Image from "next/image";
-
-const SingleCandidatePage = async ({ params }) => {
-  const { id } = params;
-  const candidate = await fetchCandidates(id);
+import { fetchLocation } from "@/app/lib/myData";
+import UpdateForm from "@/app/ui/dashboard/FormCandidate/FormCandidateUpdate";
+export default async function UpdatePage({ params }) {
+  const candidateId = params.id; // Получение ID кандидата из URL
+  const candidate = await Candidate.findById(candidateId);
+  const locations = await fetchLocation();
 
   return (
-    <div className={styles.container}>
-      <div className={styles.infoContainer}>
-        <div className={styles.imgContainer}>
-          <Image src="/noavatar.png" alt="" fill />
-        </div>
-        
-      </div>
-      <div className={styles.formContainer}>
-        <form action={updateCandidate} className={styles.form}>
-          <input type="hidden" name="id" value={candidate.id} />
-          <label>Name</label>
-          <input type="text" name="name" placeholder={candidate.name} />
-          <label>Phone</label>
-          <input type="text" name="phone" placeholder={candidate.phone} />
-          <label>location</label>
-         
-          <button>Update</button>
-        </form>
-      </div>
-    </div>
+    <main>
+      <UpdateForm candidate={candidate} locations={locations} />
+    </main>
   );
-};
-
-export default SingleCandidatePage;
+}

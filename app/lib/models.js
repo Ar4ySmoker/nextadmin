@@ -91,6 +91,11 @@ type: String,
     name: {type: String},
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Location'
+  },
+  profession: {
+    name: {type: String},
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Profession'
   }
   
 }
@@ -103,8 +108,19 @@ unique: true,
   }
 }
 )
-
+const professionSchema = new mongoose.Schema({
+  name: {
+type: String,
+unique: true,
+  },
+  description:{
+    type: String
+  }
+}
+)
 export const User = mongoose.models.User || mongoose.model("User", userSchema);
 export const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
 export const Location = mongoose.models.Location || mongoose.model("Location", locationSchema);
+export const Profession = mongoose.models.Location || mongoose.model("Profession", professionSchema);
+
 export const Candidate = mongoose.models.Candidate || mongoose.model("Candidate", candidateSchema);

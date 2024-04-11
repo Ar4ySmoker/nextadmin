@@ -79,6 +79,11 @@ export type LocationField = {
   _id: string;
   name: string;
 };
+export type ProfessionField = {
+  _id: string;
+  name: string;
+  description: String;
+};
 
 export type CandidateForm = {
   id: string;

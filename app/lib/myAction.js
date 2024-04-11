@@ -26,30 +26,33 @@ redirect("/dashboard/candidates");
 };
 
 export const updateCandidate = async (formData) => {
-    const { name, phone, location,} =
-      Object.fromEntries(formData);
-  
-    try {
-      connectToDB();
-  
-      const updateFields = {
-        name, phone, location,
-      };
-  
-      Object.keys(updateFields).forEach(
-        (key) =>
-          (updateFields[key] === "" || undefined) && delete updateFields[key]
-      );
-  
-      await Product.findByIdAndUpdate(id, updateFields);
-    } catch (err) {
-      console.log(err);
-      throw new Error("Failed to update product!");
+  const data = Object.fromEntries(formData);
+  const _id = data._id; // Извлекаем _id для поиска
+  console.log(_id)
+  const { name, phone, location } = data; // Остальные данные для обновления
+
+  try {
+     connectToDB();
+    const result = await Candidate.updateOne(
+      { _id: _id },
+      { $set: { name: name, phone: phone, location: location } }
+    );
+
+    if (result.matchedCount === 0) {
+      throw new Error("No matching document found to update");
     }
-  
-    revalidatePath("/dashboard/products");
-    redirect("/dashboard/products");
-  };
+
+    // Здесь можно добавить логику пост-обновления, например, реинвалидацию пути или редирект
+  } catch (err) {
+    console.error("Error updating candidate:", err);
+    throw new Error("Failed to update Candidate");
+  }
+  revalidatePath("/dashboard/candidates");
+redirect("/dashboard/candidates");
+};
+
+
+
 
 export const deleteCandidate = async (formData) => {
     const { id } = Object.fromEntries(formData);
@@ -66,3 +69,20 @@ export const deleteCandidate = async (formData) => {
   };
 
 
+  export const addLocation = async (formData) =>{
+    const {name} = Object.fromEntries(formData);
+
+try{
+    connectToDB()
+    const newLocation = new Location({
+        name,
+    });
+    await newLocation.save();
+}catch (err){
+    console.log(err);
+    throw new Error("Failed to create Location")
+}
+revalidatePath("/dashboard/candidates");
+redirect("/dashboard/candidates");
+
+};

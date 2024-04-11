@@ -90,7 +90,7 @@ const data = await getData()
               <td>{candidate.document}</td>
               <td>
                 <div className={styles.buttons}>
-                  <Link href={`/dashboard/candidate/${candidate._id}`}>
+                  <Link href={`/dashboard/candidates/${candidate._id}`}>
                     <button className={`${styles.button} ${styles.view}`}>
                       View
                     </button>
