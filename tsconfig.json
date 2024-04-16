@@ -32,7 +32,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-,  ],
+, "app/ui/dashboard/FormCandidate/FormCandidate.jsx",  ],
   "exclude": [
     "node_modules"
   ]

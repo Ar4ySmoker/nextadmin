@@ -1,12 +1,12 @@
 "use server"
 
 import { revalidatePath } from "next/cache";
-import { Candidate, } from "./models";
+import { Candidate } from "./models";
 import { connectToDB } from "./utils";
 import { redirect } from "next/navigation";
 
 export const addCandidate = async (formData) =>{
-    const {name, phone, location, profession} = Object.fromEntries(formData);
+    const {name, phone, location, profession, manager, status} = Object.fromEntries(formData);
 
 try{
     connectToDB()
@@ -14,7 +14,9 @@ try{
         name,
         phone,
         location,
-        profession
+        profession,
+        status,
+        manager,
     });
     await newCandidate.save();
 }catch (err){
@@ -26,62 +28,48 @@ redirect("/dashboard/candidates");
 
 };
 
-// export const updateCandidate = async (formData) => {
-//   const data = Object.fromEntries(formData);
-//   const _id = data._id; // Извлекаем _id для поиска
-//   console.log(_id)
-//   const { name, phone, location, profession } = data; // Остальные данные для обновления
 
-//   try {
-//      connectToDB();
-//     const result = await Candidate.updateOne(
-//       { _id: _id },
-//       { $set: { name: name, phone: phone, location: location, profession: profession } }
-//     );
 
-//     if (result.matchedCount === 0) {
-//       throw new Error("No matching document found to update");
-//     }
-
-//     revalidatePath("/dashboard/candidates");
-//     redirect("/dashboard/candidates");
-//     // Здесь можно добавить логику пост-обновления, например, реинвалидацию пути или редирект
-//   } catch (err) {
-//     console.error("Error updating candidate:", err);
-//     throw new Error("Failed to update Candidate");
-//   }
-  
-// };
 export const updateCandidate = async (formData) => {
   const data = Object.fromEntries(formData);
   const _id = data._id;
+  console.log("Updating candidate with ID:", _id);
+  
   const { name, phone, location, profession } = data;
+  const updateFields = { name, phone, location, profession };
+
+  // Очищаем объект обновлений от пустых значений
+  Object.keys(updateFields).forEach(key => {
+    if (updateFields[key] === undefined || updateFields[key] === '') {
+      delete updateFields[key];
+    }
+  });
 
   try {
-    await connectToDB(); // Обеспечиваем, что соединение с DB установлено
-
-    const updateFields = { name, phone, location, profession };
-    Object.keys(updateFields).forEach(
-      key => (updateFields[key] === undefined || updateFields[key] === '') && delete updateFields[key]
+    await connectToDB(); // Подключение к базе данных
+    const result = await Candidate.updateOne(
+      { _id: _id },
+      { $set: updateFields },
+      { new: true } // Возвращает объект после обновления
+      
     );
 
-    const result = await Candidate.findByIdAndUpdate(_id, { $set: updateFields }, { new: true });
-
-    if (!result) {
+    // Проверка, был ли обновлен хотя бы один документ
+    if (result.matchedCount === 0) {
+      console.log("No matching document found to update");
       throw new Error("No matching document found to update");
     }
 
-    // Здесь могут быть вызваны функции для реинвалидации или перенаправления, если они доступны в вашем контексте
-    // Например, если это API-обработчик Next.js, вы можете вернуть NextResponse для перенаправления
-    return result; 
+    console.log("Updated candidate successfully:", result);
     
-    // Возвращаем результат для API-обработчика или для последующей обработки
+    return result; // Возвращает успешный результат для дальнейшего использования
   } catch (err) {
     console.error("Error updating candidate:", err);
     throw new Error("Failed to update Candidate");
   }
   
 };
+
 
 
 

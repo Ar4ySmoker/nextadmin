@@ -78,6 +78,66 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+const managerShema = new mongoose.Schema({
+  name:{
+    type: String,
+  },
+  phone:{
+    type:String,
+    unique: true
+  },
+  candidates:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Candidate'
+  }],
+})
+
+const partnerShema = new mongoose.Schema({
+  name:{
+type: String,
+  },
+  phone:{
+type: String,
+unique:true
+  },
+  email:{
+type: String,
+unique: true
+  },
+  companyName:{
+type: String,
+unique: true
+  },
+  numberDE:{
+type: String,
+unique: true
+  },
+  location:{
+type: mongoose.Schema.Types.ObjectId,
+ref: 'Location'
+  },
+  manager:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Manager'
+  },
+  candidates:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Candidate'
+  }],
+  contractSum:{
+type: Number
+  },
+  documents:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Document'
+  }],
+  comment:{
+type: String,
+  }
+
+},
+{ timestamps: true })
+
 const candidateSchema = new mongoose.Schema({
   name: {
 type: String,
@@ -86,6 +146,27 @@ type: String,
     type: String,
     required: true,
     unique: true,
+  },
+  age:{
+    type: String,
+  },
+  citizenship:{
+type: String,
+  },
+  experience:{
+type: String,
+  },
+  leaving:{
+    type: Date,
+  },
+  drivePermis:{
+type: String,
+  },
+  cardNumber:{
+type: String,
+  },
+  workHours:{
+    type: String,
   },
   location: {
     name: {type: String},
@@ -96,11 +177,30 @@ type: String,
     name: {type: String},
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Profession'
+  },
+  documents: [{ 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Document'
+  }],
+  langue:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Langue'
+  },
+  status:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Status'
+  },
+  comment:{
+    type: String,
   }
   
-}
-)
 
+},
+{ timestamps: true }
+)
+const langueShema = new mongoose.Schema({
+  type:String
+})
 const locationSchema = new mongoose.Schema({
   name: {
 type: String,
@@ -118,9 +218,33 @@ unique: true,
   }
 }
 )
+const dodumentShema = new mongoose.Schema({
+  name:{
+    type: String,
+    unique: true,
+  },
+  dateExp:{
+    type: String,
+    required: false
+  },
+  numberDoc: {
+    type: String,
+    required:false,
+  }
+})
+
+const statusShema = new mongoose.Schema({
+  name:{
+    type: String
+  }
+})
 export const User = mongoose.models.User || mongoose.model("User", userSchema);
 export const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
 export const Location = mongoose.models.Location || mongoose.model("Location", locationSchema);
 export const Profession = mongoose.models.Profession || mongoose.model("Profession", professionSchema);
-
+export const Document = mongoose.models.Document || mongoose.model("Document", dodumentShema);
+export const Langue = mongoose.models.Langue || mongoose.model("Langue", langueShema)
+export const Status = mongoose.models.Status || mongoose.model("Status", statusShema)
 export const Candidate = mongoose.models.Candidate || mongoose.model("Candidate", candidateSchema);
+export const Manager = mongoose.models.Manager || mongoose.model("Manager", managerShema)
+export const Partner = mongoose.models.Partner || mongoose.model("Partner", partnerShema)

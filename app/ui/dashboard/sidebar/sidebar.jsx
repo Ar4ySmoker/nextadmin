@@ -1,4 +1,3 @@
-import Image from "next/image";
 import MenuLink from "./menuLink/menuLink";
 import styles from "./sidebar.module.css";
 import {
@@ -13,7 +12,7 @@ import {
   MdHelpCenter,
   MdLogout,
 } from "react-icons/md";
-import { auth, signOut } from "@/app/auth";
+import {  signOut } from "@/app/auth";
 
 const menuItems = [
   {

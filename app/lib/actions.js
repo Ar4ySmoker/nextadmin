@@ -53,7 +53,6 @@ export const updateUser = async (formData) => {
       address,
       document,
       comment,
-      document,
       isAdmin,
       isActive,
     };

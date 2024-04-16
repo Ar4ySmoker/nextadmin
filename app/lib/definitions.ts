@@ -84,10 +84,28 @@ export type ProfessionField = {
   name: string;
   description: String;
 };
-
+export type DocumentField = {
+  _id: string;
+  name: string;
+  dateExp:string;
+  numberDoc: string;
+}
+export type LangueField = {
+  _id: string;
+  name: string;
+}
+export type ManagerField = {
+  _id: string;
+  name: string;
+  phone: string;
+}
 export type CandidateForm = {
-  id: string;
+  _id: string;
   name: string;
   phone: number;
   location: string;
 };
+export type StatusField = {
+_id: string;
+name: string;
+}

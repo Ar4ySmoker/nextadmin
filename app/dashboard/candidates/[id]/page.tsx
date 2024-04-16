@@ -1,5 +1,5 @@
 import { Candidate } from "@/app/lib/models";
-import { fetchCandidates, fetchProfession, fetchLocation  } from "@/app/lib/myData";
+import { fetchProfession, fetchLocation  } from "@/app/lib/myData";
 import UpdateForm from "@/app/ui/dashboard/FormCandidate/FormCandidateUpdate";
 export default async function UpdatePage({ params }) {
   const candidateId = params.id; // Получение ID кандидата из URL
@@ -9,7 +9,7 @@ export default async function UpdatePage({ params }) {
 
   return (
     <main>
-      <UpdateForm candidate={candidate} locations={locations} professions={profession}/>
+      <UpdateForm candidate={candidate} locations={locations} profession={profession}/>
     </main>
   );
 }

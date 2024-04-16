@@ -1,25 +1,8 @@
-import { LocationField, ProfessionField } from "./definitions";
-import { Candidate, Location, Profession } from "./models";
+import { LocationField, ProfessionField, DocumentField, LangueField, ManagerField, StatusField } from "./definitions";
+import {  Location, Profession, Document, Langue, Manager, Status } from "./models";
 import { connectToDB } from "./utils";
 
-export const fetchCandidates = async (q, page) => {
-    const regex = new RegExp(q, "i");
-    const ITEM_PER_PAGE = 6;
 
-    try {
-        await connectToDB(); // Ждем, пока подключение к базе данных будет установлено
-        console.log("Connected to db");
-
-        const count = await Candidate.countDocuments({ name: { $regex: regex } });
-        const candidates = await Candidate.find({ name: { $regex: regex } })  
-            .limit(ITEM_PER_PAGE)
-            .skip(ITEM_PER_PAGE * (page - 1));
-        return { count, candidates };
-    } catch (err) {
-        console.log(err);
-        throw new Error("Failed to fetch candidates!");
-    }
-};
 
 export const fetchLocation = async (): Promise<LocationField[]> => {
     try {
@@ -33,6 +16,49 @@ export const fetchLocation = async (): Promise<LocationField[]> => {
     } catch (err) {
         console.log(err);
         throw new Error("Failed to fetch Locations!");
+    }
+};
+export const fetchLangue = async (): Promise<LangueField[]> => {
+    try {
+        await connectToDB();
+        console.log("Connected to the db");
+        const langue = await Langue.find({}, 'name').lean();
+        return langue.map(langue => ({
+            _id: langue._id.toString(),
+            name: langue.name
+          }));
+    } catch (err) {
+        console.log(err);
+        throw new Error("Failed to fetch Langue!");
+    }
+};
+export const fetchStatus = async (): Promise<StatusField[]> => {
+    try {
+        await connectToDB();
+        console.log("Connected to the db");
+        const status = await Status.find({}, 'name').lean();
+        return status.map(status => ({
+            _id: status._id.toString(),
+            name: status.name
+          }));
+    } catch (err) {
+        console.log(err);
+        throw new Error("Failed to fetch status!");
+    }
+};
+export const fetchManager = async (): Promise<ManagerField[]> => {
+    try {
+        await connectToDB();
+        console.log("Connected to the db");
+        const manager = await Manager.find({}, 'name').lean();
+        return manager.map(manager => ({
+            _id: manager._id.toString(),
+            name: manager.name,
+            phone: manager.phone
+          }));
+    } catch (err) {
+        console.log(err);
+        throw new Error("Failed to fetch Langue!");
     }
 };
 
@@ -53,6 +79,25 @@ export const fetchProfession = async (): Promise<ProfessionField[]> => {
         throw new Error("Failed to fetch Profession!");
     }
 };
+
+export const fetchDocument = async (): Promise<DocumentField[]> => {
+    try {
+         await connectToDB(); // Добавлен await для гарантии асинхронного подключения
+        console.log("Connected to db Document");
+        console.log(`${Document.modelName}`)
+        const documents = await Document.find({}, 'name').lean();
+        return documents.map(document => ({
+            _id: document._id.toString(), // Преобразование _id в строку
+            name: document.name,
+            dateExp: document.dateExp, // Убедитесь, что поле description существует в модели
+            numberDoc: document.numberDoc,
+        }));
+    } catch (err) {
+        console.log(err);
+        throw new Error("Failed to fetch Document!");
+    }
+};
+
 
 
 

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDB } from "@/app/lib/utils";
 import { Profession } from "@/app/lib/models";
 
-export const GET = async(request) =>{
+export const GET = async() =>{
     try{
 await connectToDB()
 const professions = await Profession.find()

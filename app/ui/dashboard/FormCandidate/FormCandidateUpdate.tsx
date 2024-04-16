@@ -8,7 +8,7 @@ const handleUpdateCandidate = async (event) => {
   await updateCandidate(formData);
 };
 
-export default function UpdateForm({ candidate, locations, professions }) {
+export default function UpdateForm({ candidate, locations, profession }) {
   return (
     <div className={styles.container}>
       <form onSubmit={handleUpdateCandidate} className={styles.form}>
@@ -37,7 +37,7 @@ export default function UpdateForm({ candidate, locations, professions }) {
           aria-describedby="profession-error"
         >
 
-          {professions.map((profession) => (
+          {profession.map((profession: any) => (
             <option key={profession._id} value={profession._id}>
               {profession.name}
             </option>
