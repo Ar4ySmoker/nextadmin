@@ -25,7 +25,7 @@ export default function Form({ professions, locations, documents, langue, status
       langue: formData.get('langue'),
       status: formData.get('status'),
       manager: formData.get('manager'),
-      comment: formData.get('workHours')
+      comment: formData.get('comment')
     };
   
     try {

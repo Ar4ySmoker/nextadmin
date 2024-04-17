@@ -70,7 +70,7 @@ width: 100%;
   position: relative;
   width: 100%;
 }
-.wrapperDescr td{
+.wrapperDescr *{
   width: 100%;
 }
 .acordeon{

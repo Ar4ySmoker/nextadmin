@@ -1,63 +1,98 @@
 import styles from "@/app/ui/dashboard/users/users.module.css";
 import Link from "next/link";
 import { deleteCandidate } from "@/app/lib/myAction";
-import { notFound } from "next/navigation";
 import React from "react";
+import SearchComponent from "@/app/ui/dashboard/SearchComponent/SearchComponent";
 
 
+// async function getData() {
 
-async function getData() {
+//   try {
+//     const candidatesRes = await fetch("http://localhost:3000/api/candidates");
+//     const locationsRes = await fetch("http://localhost:3000/api/locations");
+//     const professionsRes = await fetch("http://localhost:3000/api/profession")
+//     const managerRes = await fetch("http://localhost:3000/api/manager")
+//     const statusRes = await fetch("http://localhost:3000/api/status")
+//     const langueRes = await fetch("http://localhost:3000/api/langue")
 
-  try {
-    const candidatesRes = await fetch("http://localhost:3000/api/candidates");
-    const locationsRes = await fetch("http://localhost:3000/api/locations");
-    const professionsRes = await fetch("http://localhost:3000/api/profession")
-    const managerRes = await fetch("http://localhost:3000/api/manager")
-    const statusRes = await fetch("http://localhost:3000/api/status")
-    const langueRes = await fetch("http://localhost:3000/api/langue")
+//     // if (!candidatesRes.ok || !locationsRes.ok || !professionsRes.ok) return notFound();
 
-    if (!candidatesRes.ok || !locationsRes.ok || !professionsRes.ok) return notFound();
-
-    const candidates = await candidatesRes.json();
-    const locations = await locationsRes.json();
-    const professions = await professionsRes.json()
-    const manager = await managerRes.json()
-    const status = await statusRes.json()
-    const langue = await langueRes.json()
+//     const candidates = await candidatesRes.json();
+//     const locations = await locationsRes.json();
+//     const professions = await professionsRes.json()
+//     const manager = await managerRes.json()
+//     const status = await statusRes.json()
+//     const langue = await langueRes.json()
 
     
-    // Создаем объект для быстрого доступа к данным о локациях по их _id
-    const locationsMap = {};
-    locations.forEach(location => {
-      locationsMap[location._id] = location.name;
-    });
+//     // Создаем объект для быстрого доступа к данным о локациях по их _id
+//     const locationsMap = {};
+//     locations.forEach(location => {
+//       locationsMap[location._id] = location.name;
+//     });
 
-    const professionsMap = {};
-    professions.forEach(profession =>{
-      professionsMap[profession._id] = profession.name;
-    })
-    const managerMap = {};
-    manager.forEach(manager =>{
-      managerMap[manager._id] = manager.name;
-    })
-    const statusMap = {};
-    status.forEach(status =>{
-      statusMap[status._id] = status.name;
-    })
-    const langueMap = {};
-    status.forEach(langue =>{
-      statusMap[langue._id] = langue.name;
-    })
+//     const professionsMap = {};
+//     professions.forEach(profession =>{
+//       professionsMap[profession._id] = profession.name;
+//     })
+//     const managerMap = {};
+//     manager.forEach(manager =>{
+//       managerMap[manager._id] = manager.name;
+//     })
+//     const statusMap = {};
+//     status.forEach(status =>{
+//       statusMap[status._id] = status.name;
+//     })
+//     const langueMap = {};
+//     status.forEach(langue =>{
+//       statusMap[langue._id] = langue.name;
+//     })
 
-    // Добавляем поле locationName к каждому кандидату
+//     // Добавляем поле locationName к каждому кандидату
+//     candidates.forEach(candidate => {
+//       candidate.locationName = locationsMap[candidate.location] || "Не указано";
+//       candidate.professionName = professionsMap[candidate.profession] || "Без профессии"
+//       candidate.managerName = managerMap[candidate.manager] || "Без менеджера"
+//       candidate.statusName = statusMap[candidate.status] || "Не обработан"
+//       candidate.langueName = langueMap[candidate.langue] || "Не знает"
+//     });
+
+
+//     return candidates;
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//     return [];
+//   }
+// }
+async function getData() {
+  try {
+    const endpoints = ["candidates", "locations", "profession", "manager", "status", "langue"];
+    const baseUrl = "http://localhost:3000/api/";
+    const responses = await Promise.all(
+      endpoints.map(endpoint => fetch(baseUrl + endpoint))
+    );
+
+    if (responses.some(response => !response.ok)) {
+      return []; 
+    }
+
+    const [candidates, locations, professions, managers, statuses, langues] = await Promise.all(
+      responses.map(response => response.json())
+    );
+
+    const locationMap = Object.fromEntries(locations.map(loc => [loc._id, loc.name]));
+    const professionMap = Object.fromEntries(professions.map(prof => [prof._id, prof.name]));
+    const managerMap = Object.fromEntries(managers.map(mng => [mng._id, mng.name]));
+    const statusMap = Object.fromEntries(statuses.map(st => [st._id, st.name]));
+    const langueMap = Object.fromEntries(langues.map(lng => [lng._id, lng.name]));
+
     candidates.forEach(candidate => {
-      candidate.locationName = locationsMap[candidate.location] || "Не указано";
-      candidate.professionName = professionsMap[candidate.profession] || "Без профессии"
-      candidate.managerName = managerMap[candidate.manager] || "Без менеджера"
-      candidate.statusName = statusMap[candidate.status] || "Не обработан"
-      candidate.langueName = langueMap[candidate.langue] || "Не знает"
+      candidate.locationName = locationMap[candidate.location] || "Не указано";
+      candidate.professionName = professionMap[candidate.profession] || "Без профессии";
+      candidate.managerName = managerMap[candidate.manager] || "Без менеджера";
+      candidate.statusName = statusMap[candidate.status] || "Не обработан";
+      candidate.langueName = langueMap[candidate.langue] || "Не знает";
     });
-
 
     return candidates;
   } catch (error) {
@@ -65,10 +100,9 @@ async function getData() {
     return [];
   }
 }
+
 const CandidatesPage = async () => {
-  // const q = searchParams?.q || "";
-  // const page = searchParams?.page || 1;
-  // const { count, candidates } = await fetchCandidates(q, page);
+ 
   const data = await getData();
     return (
     <div className={styles.container}>
@@ -106,7 +140,7 @@ const CandidatesPage = async () => {
         <div className={styles.buttons}>
           <Link href={`/dashboard/candidates/${candidate._id}`}>
             <button className={`${styles.button} ${styles.view}`}>
-              Посмотреть
+              Редактировать
             </button>
           </Link>
           <form action={deleteCandidate}>
@@ -141,6 +175,8 @@ const CandidatesPage = async () => {
       </table>
       </div>
       {/* <Pagination count={count} /> */}
+      <SearchComponent />
+
     </div>
   );
 };

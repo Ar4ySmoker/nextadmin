@@ -16,27 +16,27 @@ import {  signOut } from "@/app/auth";
 
 const menuItems = [
   {
-    title: "Pages",
+    title: "Страницы",
     list: [
       {
-        title: "Dashboard",
+        title: "Главная",
         path: "/dashboard",
         icon: <MdDashboard />,
       },
       {
-        title: "Users",
-        path: "/dashboard/users",
+        title: "Кандидаты",
+        path: "/dashboard/candidates",
         icon: <MdSupervisedUserCircle />,
       },
       {
-        title: "Products",
-        path: "/dashboard/products",
-        icon: <MdShoppingBag />,
+        title: "Заказчики",
+        path: "/dashboard/partners",
+        icon: <MdAttachMoney />,
       },
       {
-        title: "Transactions",
-        path: "/dashboard/transactions",
-        icon: <MdAttachMoney />,
+        title: "Вакансии",
+        path: "/dashboard/posts",
+        icon: <MdShoppingBag />,
       },
     ],
   },
