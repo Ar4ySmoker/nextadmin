@@ -87,7 +87,8 @@ export const deleteCandidate = async (formData) => {
     }
   
     revalidatePath("/dashboard/candidates");
-  };
+    redirect("/dashboard/candidates");  };
+
 
 
   export const addLocation = async (formData) =>{

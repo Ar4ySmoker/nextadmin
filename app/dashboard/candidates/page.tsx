@@ -1,184 +1,200 @@
+'use client'
+
+import React, { useState, useEffect } from 'react';
 import styles from "@/app/ui/dashboard/users/users.module.css";
 import Link from "next/link";
 import { deleteCandidate } from "@/app/lib/myAction";
-import React from "react";
-import SearchComponent from "@/app/ui/dashboard/SearchComponent/SearchComponent";
+import { Candidate } from '@/app/lib/definitions';
 
+function CandidatesPage() {
+  const [candidates, setCandidates] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  // Функция для загрузки данных API
+  async function fetchDataFromApi() {
+    try {
+      const endpoints = ["candidates", "profession", "locations","document", "manager", "status", "langue"];
+      const baseUrl = "http://localhost:3000/api/";
+      const responses = await Promise.all(
+        endpoints.map(endpoint => fetch(baseUrl + endpoint))
+      );
 
-// async function getData() {
+      if (responses.some(response => !response.ok)) {
+        throw new Error('Failed to fetch some endpoints');
+      }
 
-//   try {
-//     const candidatesRes = await fetch("http://localhost:3000/api/candidates");
-//     const locationsRes = await fetch("http://localhost:3000/api/locations");
-//     const professionsRes = await fetch("http://localhost:3000/api/profession")
-//     const managerRes = await fetch("http://localhost:3000/api/manager")
-//     const statusRes = await fetch("http://localhost:3000/api/status")
-//     const langueRes = await fetch("http://localhost:3000/api/langue")
-
-//     // if (!candidatesRes.ok || !locationsRes.ok || !professionsRes.ok) return notFound();
-
-//     const candidates = await candidatesRes.json();
-//     const locations = await locationsRes.json();
-//     const professions = await professionsRes.json()
-//     const manager = await managerRes.json()
-//     const status = await statusRes.json()
-//     const langue = await langueRes.json()
-
-    
-//     // Создаем объект для быстрого доступа к данным о локациях по их _id
-//     const locationsMap = {};
-//     locations.forEach(location => {
-//       locationsMap[location._id] = location.name;
-//     });
-
-//     const professionsMap = {};
-//     professions.forEach(profession =>{
-//       professionsMap[profession._id] = profession.name;
-//     })
-//     const managerMap = {};
-//     manager.forEach(manager =>{
-//       managerMap[manager._id] = manager.name;
-//     })
-//     const statusMap = {};
-//     status.forEach(status =>{
-//       statusMap[status._id] = status.name;
-//     })
-//     const langueMap = {};
-//     status.forEach(langue =>{
-//       statusMap[langue._id] = langue.name;
-//     })
-
-//     // Добавляем поле locationName к каждому кандидату
-//     candidates.forEach(candidate => {
-//       candidate.locationName = locationsMap[candidate.location] || "Не указано";
-//       candidate.professionName = professionsMap[candidate.profession] || "Без профессии"
-//       candidate.managerName = managerMap[candidate.manager] || "Без менеджера"
-//       candidate.statusName = statusMap[candidate.status] || "Не обработан"
-//       candidate.langueName = langueMap[candidate.langue] || "Не знает"
-//     });
-
-
-//     return candidates;
-//   } catch (error) {
-//     console.error("Error fetching data:", error);
-//     return [];
-//   }
-// }
-async function getData() {
-  try {
-    const endpoints = ["candidates", "locations", "profession", "manager", "status", "langue"];
-    const baseUrl = "http://localhost:3000/api/";
-    const responses = await Promise.all(
-      endpoints.map(endpoint => fetch(baseUrl + endpoint))
-    );
-
-    if (responses.some(response => !response.ok)) {
-      return []; 
+      const [candidates, profession, locations, document, manager, status, langue] = await Promise.all(
+        responses.map(response => response.json())
+      );
+      
+const locationMap = Object.fromEntries(locations.map((loc: { _id: any; name: any; }) => [loc._id, loc.name]));
+const professionMap = Object.fromEntries(profession.map((prof: { _id: any; name: any; }) => [prof._id, prof.name]));
+const documentMap = Object.fromEntries(document.map((dcm: { _id: any; name: any; }) => [dcm._id, dcm.name]));
+const managerMap = Object.fromEntries(manager.map((mng: { _id: any; name: any; }) => [mng._id, mng.name]));
+const statusMap = Object.fromEntries(status.map((st: { _id: any; name: any; }) => [st._id, st.name]));
+const langueMap = Object.fromEntries(langue.map((lng: { _id: any; name: any; }) => [lng._id, lng.name]));
+      return candidates.map((candidate: { location: string | number; profession: string | number; document: string | number; manager: string | number; status: string | number; langue: string | number; }) => ({
+        ...candidate,
+        locationName: locationMap[candidate.location] || "Не указано",
+        professionName: professionMap[candidate.profession] || "Без профессии",
+        documentName: documentMap[candidate.document] || "Не заполнено",
+        managerName: managerMap[candidate.manager] || "Без менеджера",
+        statusName: statusMap[candidate.status] || "Не обработан",
+        langueName: langueMap[candidate.langue] || "Не знает"
+      }));
+      
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return [];
     }
-
-    const [candidates, locations, professions, managers, statuses, langues] = await Promise.all(
-      responses.map(response => response.json())
-    );
-
-    const locationMap = Object.fromEntries(locations.map(loc => [loc._id, loc.name]));
-    const professionMap = Object.fromEntries(professions.map(prof => [prof._id, prof.name]));
-    const managerMap = Object.fromEntries(managers.map(mng => [mng._id, mng.name]));
-    const statusMap = Object.fromEntries(statuses.map(st => [st._id, st.name]));
-    const langueMap = Object.fromEntries(langues.map(lng => [lng._id, lng.name]));
-
-    candidates.forEach(candidate => {
-      candidate.locationName = locationMap[candidate.location] || "Не указано";
-      candidate.professionName = professionMap[candidate.profession] || "Без профессии";
-      candidate.managerName = managerMap[candidate.manager] || "Без менеджера";
-      candidate.statusName = statusMap[candidate.status] || "Не обработан";
-      candidate.langueName = langueMap[candidate.langue] || "Не знает";
-    });
-
-    return candidates;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return [];
   }
-}
 
-const CandidatesPage = async () => {
- 
-  const data = await getData();
-    return (
-    <div className={styles.container}>
-      <div className={styles.top}>
-        {/* <Search placeholder="Search for a Candidates..." /> */}
+  // Загрузка данных при монтировании компонента
+  useEffect(() => {
+    fetchDataFromApi().then(setCandidates);
+  }, []);
+  const handleDeleteCandidate = async (candidateId: any) => {
+    const isDeleted = await deleteCandidate(candidateId);
+    if (isDeleted) {
+      setCandidates(prevCandidates => prevCandidates.filter(c => c._id !== candidateId));
+    }
+  };
+  const handleOpenModal = (candidate: Candidate) => {
+    setSelectedCandidate(candidate);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedCandidate(null);
+  };
+  const handleSearchChange = (event: { target: { value: string; }; }) => {
+    setSearchTerm(event.target.value.toLowerCase());
+  };
+
+  const filteredCandidates = candidates.filter(candidate =>
+    candidate.name.toLowerCase().includes(searchTerm) ||
+    candidate.phone.includes(searchTerm) ||
+    candidate.locationName.toLowerCase().includes(searchTerm) ||
+    candidate.professionName.toLowerCase().includes(searchTerm)
+  );
+
+  return (
+    
+    <div className="overflow-x-auto">
+        <div className={styles.top}>
+        <input
+          type="text"
+          placeholder="Search for a Candidate..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className={styles.searchInput}
+        />
         <Link href="/dashboard/candidates/add">
           <button className={styles.addButton}>Добавить кандидата</button>
         </Link>
       </div>
-      <div>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <td>Имя</td>
-            <td>Телефон</td>
-            <td>Город</td>
-            <td>Профессия</td>
-            <td>Добавлен</td>
-            <td>Документы</td>
-            <td>Действия</td>
-          </tr>
-        </thead>
+  <table className="table">
+    
+    {/* head */}
+    <thead>
+      <tr>
         
-        <tbody>
-  {data.map((candidate:any) => (
-      <React.Fragment key={candidate._id}>
-      <tr >
-      <td>{candidate.name}</td>
-      <td>{candidate.phone}</td>
-      <td>{candidate.locationName}</td>
-      <td>{candidate.professionName}</td>
-      <td>{candidate.createdAt?.toString().slice(0, 10)}</td>
-      <td>{candidate.professionName}</td>
-      <td>
-        <div className={styles.buttons}>
-          <Link href={`/dashboard/candidates/${candidate._id}`}>
-            <button className={`${styles.button} ${styles.view}`}>
-              Редактировать
-            </button>
-          </Link>
-          <form action={deleteCandidate}>
-            <input type="hidden" name="id" value={candidate._id} />
-            <button className={`${styles.button} ${styles.delete}`}>
-              Удалить
-            </button>
-          </form>
-        </div>
-      </td>
-    </tr>
-    <tr className={styles.wrapperDescr}>
-        <td >  
-          <details>
-            <summary >Подробнее</summary>
-            <div className={styles.acordeon}>
-              <p>Менеджер: {candidate.managerName}</p>
-              <p>Статус: {candidate.statusName}</p>
-              <p>Опыт работы: {candidate.experience}</p>
-              <p>Знание языков: {candidate.langueName}</p>
-              <p>Наличие категорий В/У: {candidate.drivePermis}</p>
-              <p>Готов выехать: {candidate.leaving?.toString().slice(0, 10)}</p>
-              <p>Комментарий: {candidate.comment}</p>
-            </div>
-          </details>
-        </td>
+        <th>Имя</th>
+        <th>Телефон</th>
+        <th>Профессия</th>
+        <th>Добавлен</th>
+        <th>Документы</th>
+        <th>Действия</th>
       </tr>
-      </React.Fragment>
-  ))}
-</tbody>
+    </thead>
+    <tbody>
+      {/* row 1 */}
+      {filteredCandidates.map(candidate => (
+            <tr key={candidate._id}>
+              <td>
+          <div className="flex items-center gap-3">
+            <div>
+              <div className="font-bold">{candidate.name}</div>
+              <div className="text-sm opacity-50">В городе {candidate.locationName}</div>
+            </div>
+          </div>
+              </td>
+              <td>{candidate.phone}</td>
+              <td>
+              <div className="flex items-center gap-3">
+            <div>
+              <div className="font-bold">{candidate.professionName}</div>
+              <div className="text-sm opacity-50">Опыт {candidate.experience}</div>
+            </div>
+          </div>
+              </td>
+              <td>{candidate.createdAt?.substring(0, 10)}</td>
+              <td>{candidate.document}</td>
+              
+              <td>
+         <div className={styles.buttons}>
+           <Link href={`/dashboard/candidates/${candidate._id}`}>
+             <button className={`${styles.button} ${styles.view}`}>
+               Редактировать
+             </button>
+           </Link>
+           <div className={styles.buttons}>
+                  <button className={`${styles.button} ${styles.view}`} onClick={() => handleOpenModal(candidate)}>
+                    Подробнее
+                  </button>
+                </div>
+         </div>
+       </td>
+            </tr>
+            
+            
+          ))}
+     
 
-      </table>
+     
+    </tbody>
+    {/* foot */}
+    <tfoot>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Job</th>
+        <th>Favorite Color</th>
+        <th></th>
+      </tr>
+    </tfoot>
+    
+  </table>
+  {/* Модальное окно */}
+{modalOpen && (
+  <dialog className="modal" open>
+    <div className="modal-box bg-white">
+      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={handleCloseModal}>✕</button>
+      <h3 className="font-bold text-lg">Информация о кандидате</h3>
+      <div className="py-4">
+      <p><strong>Менеджер:</strong> {selectedCandidate.managerName}</p>
+        <p><strong>Имя:</strong> {selectedCandidate.name}</p>
+        <p><strong>Возраст:</strong> {selectedCandidate.age}</p>
+        <p><strong>Телефон:</strong> {selectedCandidate.phone}</p>
+        <p><strong>Профессия:</strong> {selectedCandidate.professionName}</p>
+        <p><strong>Город:</strong> {selectedCandidate.locationName}</p>
+        <p><strong>Добавлен:</strong> {selectedCandidate.createdAt?.substring(0, 10)}</p>
+        <p><strong>Документы:</strong> {selectedCandidate.documentName}</p>
+        <p><strong>Статус:</strong> {selectedCandidate.statusName}</p>
+        <p><strong>Язык:</strong> {selectedCandidate.langueName}</p>
+        <p><strong>Водительское Удостоверение:</strong> {selectedCandidate.drivePermis}</p>
+        <p><strong>Готов выехать:</strong> {typeof selectedCandidate.leaving === 'string' ? selectedCandidate.leaving.substring(0, 10) : 'Неизвестно'}</p>
+        <p><strong>Комментарий:</strong> {selectedCandidate.comment}</p>
+
       </div>
-      {/* <Pagination count={count} /> */}
-      <SearchComponent />
-
     </div>
+  </dialog>
+)}
+
+</div>
   );
-};
+}
 
 export default CandidatesPage;

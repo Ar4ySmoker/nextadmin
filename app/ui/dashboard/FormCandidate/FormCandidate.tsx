@@ -173,9 +173,14 @@ export default function Form({ professions, locations, documents, langue, status
                 </option>
               ))}
             </select> 
-            <input  id="comment"
-                name="comment"
+            <input  id="cardNumber"
+                name="cardNumber"
                 type="text"
+                placeholder="Номер счёта"
+                 /> 
+            <textarea  id="comment"
+                name="comment"
+                
                 placeholder="Оставьте комментарий"
                  />  
         <button type="submit">Добавить кандидата</button>

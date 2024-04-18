@@ -5,8 +5,9 @@ import { Profession } from "@/app/lib/models";
 export const GET = async() =>{
     try{
 await connectToDB()
-const professions = await Profession.find()
-return new NextResponse(JSON.stringify(professions), {status:200})
+const profession = await Profession.find()
+console.log("Profession is test:", profession)
+return new NextResponse(JSON.stringify(profession), {status:200})
 
     }
     catch(error){

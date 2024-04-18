@@ -1,6 +1,9 @@
 // This file contains type definitions for your data.
 // It describes the shape of the data, and what data type each property should accept.
 // For simplicity of teaching, we're manually defining these types.
+
+import { ReactNode } from "react";
+
 // However, these types are generated automatically if you're using an ORM such as Prisma.
 export type User = {
   id: string;
@@ -10,6 +13,14 @@ export type User = {
 };
 
 export type Candidate = {
+  [x: string]: ReactNode;
+  managerName: ReactNode;
+  comment: ReactNode;
+  statusName: ReactNode;
+  langueName: ReactNode;
+  documentName: ReactNode;
+  createdAt: any;
+  professionName: ReactNode;
   id: string;
   name: string;
   phone: string;

@@ -84,9 +84,10 @@ const managerShema = new mongoose.Schema({
   },
   phone:{
     type:String,
-    unique: true
+    unique: true,
   },
   candidates:[{
+    
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Candidate'
   }],
@@ -168,7 +169,7 @@ type: String,
   workHours:{
     type: String,
   },
-  location: {
+  locations: {
     name: {type: String},
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Location'
@@ -178,13 +179,17 @@ type: String,
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Profession'
   },
-  documents: [{ 
+  document: { 
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Document'
-  }],
+  },
   langue:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Langue'
+  },
+  manager:{
+type: mongoose.Schema.Types.ObjectId,
+ref: 'Manager'
   },
   status:{
     type: mongoose.Schema.Types.ObjectId,
@@ -225,11 +230,11 @@ const dodumentShema = new mongoose.Schema({
   },
   dateExp:{
     type: String,
-    required: false
+  
   },
   numberDoc: {
     type: String,
-    required:false,
+   
   }
 })
 

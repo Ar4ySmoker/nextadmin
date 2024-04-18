@@ -21,6 +21,7 @@ export const POST = async (request: Request) => {
 
     await connectToDB();
     const newCandidate = new Candidate(body);
+    console.log(body)
     await newCandidate.save();
     
 
