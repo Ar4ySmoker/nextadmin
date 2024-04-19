@@ -196,13 +196,23 @@ ref: 'Manager'
     ref: 'Status'
   },
   comment:{
-    type: String,
-  }
+    type: String
+  },
+  commentMng: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CommentMng'
+  }]
   
 
 },
 { timestamps: true }
 )
+const commentMngSchema = new mongoose.Schema({
+  comment: {
+    type: String,
+    required: true
+  }
+}, { timestamps: true }); 
 const langueShema = new mongoose.Schema({
   type:String
 })
@@ -253,3 +263,4 @@ export const Status = mongoose.models.Status || mongoose.model("Status", statusS
 export const Candidate = mongoose.models.Candidate || mongoose.model("Candidate", candidateSchema);
 export const Manager = mongoose.models.Manager || mongoose.model("Manager", managerShema)
 export const Partner = mongoose.models.Partner || mongoose.model("Partner", partnerShema)
+export const CommentMng = mongoose.models.CommentMng || mongoose.model("CommentMng", commentMngSchema)

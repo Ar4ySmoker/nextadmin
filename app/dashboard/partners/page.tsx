@@ -14,7 +14,7 @@ async function getData() {
     const professionsRes = await fetch("http://localhost:3000/api/profession")
     const managerRes = await fetch("http://localhost:3000/api/manager")
     const statusRes = await fetch("http://localhost:3000/api/status")
-    const langueRes = await fetch("http://localhost:3000/api/langue")
+    const langueRes = await fetch("http://localhost:3000/api/langues")
 
     if (!candidatesRes.ok || !locationsRes.ok || !professionsRes.ok) return notFound();
 
@@ -23,7 +23,7 @@ async function getData() {
     const professions = await professionsRes.json()
     const manager = await managerRes.json()
     const status = await statusRes.json()
-    const langue = await langueRes.json()
+    // const langues = await langueRes.json()
 
     
     // Создаем объект для быстрого доступа к данным о локациях по их _id
@@ -45,8 +45,8 @@ async function getData() {
       statusMap[status._id] = status.name;
     })
     const langueMap = {};
-    status.forEach(langue =>{
-      statusMap[langue._id] = langue.name;
+    status.forEach(langues =>{
+      statusMap[langues._id] = langues.name;
     })
 
     // Добавляем поле locationName к каждому кандидату

@@ -15,7 +15,7 @@ export default function Form({ professions, locations, documents, langue, status
       age: formData.get('age'),
       phone: formData.get('phone'),
       profession: formData.get('profession'),
-      location: formData.get('location'),
+      locations: formData.get('locations'),
       document: formData.get('document'),
       experience: formData.get('experience'),
       drivePermis: formData.get('drivePermis'),
@@ -104,16 +104,16 @@ export default function Form({ professions, locations, documents, langue, status
                 placeholder="Часы отработки"
                  />                  
          <select
-              id="location"
-              name="location"
+              id="locations"
+              name="locations"
               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
               defaultValue=""
               aria-describedby="location-error"
             >
               
-              {locations.map((location) => (
-                <option key={location._id} value={location._id}>
-                  {location.name}
+              {locations.map((locations) => (
+                <option key={locations._id} value={locations._id}>
+                  {locations.name}
                 </option>
               ))}
             </select>
