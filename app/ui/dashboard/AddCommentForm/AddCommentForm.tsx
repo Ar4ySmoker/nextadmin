@@ -1,5 +1,6 @@
 // Компонент для добавления комментариев к кандидату
 import React from 'react';
+import cls from "./AddCommentForm.module.css"
 export function AddCommentForm({ candidateId }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -22,9 +23,9 @@ export function AddCommentForm({ candidateId }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <textarea name="commentText" required placeholder="Введите комментарий"></textarea>
-      <button type="submit">Добавить комментарий</button>
+    <form className={cls.form} onSubmit={handleSubmit}>
+      <textarea  name="commentText" required placeholder="Введите комментарий"></textarea>
+      <button  type="submit">Добавить комментарий</button>
     </form>
   );
 }

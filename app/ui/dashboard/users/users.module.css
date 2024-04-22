@@ -101,3 +101,10 @@ width: 100%;
   display: flex;
   gap: 20px;
 }
+.deleteCandidate{
+  width: max-content;
+  background-color: red;
+  color: black;
+  padding: 5px;
+  border-radius: 10px;
+}

@@ -5,8 +5,8 @@ import { CommentMng } from "@/app/lib/models";
 export const GET = async() =>{
     try{
 await connectToDB()
-const commentMng = await CommentMng.find()
-return new NextResponse(JSON.stringify(commentMng), {status:200})
+const commentMng = await CommentMng.find({}, 'commentText createdAt');  // Убедитесь, что выбираете поля createdAt
+return new NextResponse(JSON.stringify(commentMng ), {status:200})
 
     }
     catch(error){

@@ -1,7 +1,10 @@
-// Файл: app/api/addComment.ts
 import { NextResponse } from 'next/server';
 import { connectToDB } from '@/app/lib/utils';
 import { Candidate, CommentMng } from '@/app/lib/models';
+import WebSocket from 'ws';
+
+// Предполагается, что WebSocket сервер уже запущен на другом порту
+const ws = new WebSocket('ws://localhost:3001');
 
 export const config = {
   runtime: 'experimental-edge',
@@ -12,17 +15,20 @@ export const POST = async (request: Request) => {
     const body = await request.json();
 
     await connectToDB();
-    // Изменение поля на commentText, чтобы соответствовать модели CommentMng
     const newComment = new CommentMng({ commentText: body.commentText });
     await newComment.save();
 
-    // Обновление кандидата добавлением ID комментария
     await Candidate.findByIdAndUpdate(body.candidateId, {
       $push: { commentMng: newComment._id }
     });
 
+    // Отправка обновления через WebSocket
+    ws.on('open', function open() {
+      ws.send(JSON.stringify({ type: 'NEW_COMMENT', data: newComment }));
+    });
+
     return new NextResponse(
-      JSON.stringify({ message: "Comment added successfully", candidate: newComment }),
+      JSON.stringify({ message: "Comment added successfully", comment: newComment }),
       { status: 201 }
     );
   } catch (error) {
@@ -37,4 +43,3 @@ export const POST = async (request: Request) => {
     );
   }
 };
-
