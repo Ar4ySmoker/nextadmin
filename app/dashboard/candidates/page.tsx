@@ -5,7 +5,7 @@ import styles from "@/app/ui/dashboard/users/users.module.css";
 import Link from "next/link";
 import { deleteCandidate } from "@/app/lib/myAction";
 import { Candidate } from '@/app/lib/definitions';
-import AddCommentForm from '@/app/ui/dashboard/AddCommentForm/AddCommentForm';
+import {AddCommentForm} from '@/app/ui/dashboard/AddCommentForm/AddCommentForm';
 
 function CandidatesPage() {
   const [candidates, setCandidates] = useState([]);
@@ -15,7 +15,7 @@ function CandidatesPage() {
   // Функция для загрузки данных API
   async function fetchDataFromApi() {
     try {
-      const endpoints = ["candidates", "profession", "locations", "document", "manager", "status", "langue"];
+      const endpoints = ["candidates", "profession", "locations", "document", "manager", "status", "langue", "commentMng"];
       const baseUrl = "http://localhost:3000/api/";
       const responses = await Promise.all(
         endpoints.map(endpoint => fetch(baseUrl + endpoint))
@@ -25,7 +25,7 @@ function CandidatesPage() {
         throw new Error('Failed to fetch some endpoints');
       }
 
-      const [candidates, profession, locations, document, manager, status, langue] = await Promise.all(
+      const [candidates, profession, locations, document, manager, status, langue, commentMng] = await Promise.all(
         responses.map(response => response.json())
       );
 
@@ -35,14 +35,16 @@ function CandidatesPage() {
       const managerMap = Object.fromEntries(manager.map((mng: { _id: any; name: any; }) => [mng._id, mng.name]));
       const statusMap = Object.fromEntries(status.map((st: { _id: any; name: any; }) => [st._id, st.name]));
       const langueMap = Object.fromEntries(langue.map((lng: { _id: any; name: any; }) => [lng._id, lng.name]));
-      return candidates.map((candidate: { locations: string | number; profession: string | number; document: string | number; manager: string | number; status: string | number; langue: string | number; }) => {
+      const commentMngMap = Object.fromEntries(commentMng.map((cmt: { _id: any; commentText: any; }) =>[cmt._id,cmt.commentText ]))
+      return candidates.map((candidate: { locations: string | number; profession: string | number; document: string | number; manager: string | number; status: string | number; langue: string | number; commentMng: string | number; }) => {
         const {
           locations,
           profession,
           document,
           manager,
           status,
-          langue
+          langue,
+          commentMng
         } = candidate
         return {
           ...candidate,
@@ -52,7 +54,8 @@ function CandidatesPage() {
           documentName: documentMap[document] || "Не заполнено",
           managerName: managerMap[manager] || "Без менеджера",
           statusName: statusMap[status] || "Не обработан",
-          langueName: langueMap[langue] || "Не знает"
+          langueName: langueMap[langue] || "Не знает",
+          commentMngNames: Array.isArray(candidate.commentMng) ? candidate.commentMng.map(id => commentMngMap[id] || "Неизвестный комментарий") : []
         }
       });
 
@@ -72,10 +75,29 @@ function CandidatesPage() {
   //     setCandidates(prevCandidates => prevCandidates.filter(c => c._id !== candidateId));
   //   }
   // };
-  const handleOpenModal = (candidate: Candidate) => {
+  // const handleOpenModal = (candidate: Candidate) => {
+  //   console.log("Opening modal for candidate:", candidate._id);  // Убедитесь, что _id есть и передается
+  //   setSelectedCandidate(candidate);
+  //   setModalOpen(true);
+  // };
+  const handleOpenModal = async (candidate) => {
+    console.log("Opening modal for candidate:", candidate._id); // Убедитесь, что _id есть и передается
     setSelectedCandidate(candidate);
     setModalOpen(true);
+  
+    // Загрузка комментариев для данного кандидата
+    const response = await fetch(`/api/comments/${candidate._id}`); // Предположим, что у вас есть API, который по ID кандидата возвращает комментарии
+    if (response.ok) {
+      const comments = await response.json();
+      setSelectedCandidate(prev => ({
+        ...prev,
+        commentMngNames: comments.map(comment => comment.commentText) // предполагаем, что API возвращает массив объектов с полем commentText
+      }));
+    } else {
+      console.error('Failed to load comments');
+    }
   };
+  
 
   const handleCloseModal = () => {
     setModalOpen(false);
@@ -193,14 +215,20 @@ function CandidatesPage() {
               <p><strong>Профессия:</strong> {selectedCandidate.professionName}</p>
               <p><strong>Описание:</strong> {selectedCandidate.professionDescription}</p>
               <p><strong>Город:</strong> {selectedCandidate.locationName}</p>
-              <p><strong>Добавлен:</strong> {selectedCandidate.createdAt?.substring(0, 10)}</p>
+              <p><strong>Добавлен:</strong> {typeof selectedCandidate.createdAt === 'string' ? selectedCandidate.createdAt.substring(0, 10) : 'Неизвестно'}</p>
               <p><strong>Документы:</strong> {selectedCandidate.documentName}</p>
               <p><strong>Статус:</strong> {selectedCandidate.statusName}</p>
               <p><strong>Язык:</strong> {selectedCandidate.langueName}</p>
               <p><strong>Водительское Удостоверение:</strong> {selectedCandidate.drivePermis}</p>
               <p><strong>Готов выехать:</strong> {typeof selectedCandidate.leaving === 'string' ? selectedCandidate.leaving.substring(0, 10) : 'Неизвестно'}</p>
               <p><strong>Комментарий:</strong> {selectedCandidate.commentCand}</p>
-              <AddCommentForm candidateId={selectedCandidate.id}/>
+              <p><strong>Комментарии менеджера:</strong></p>
+        <ul>
+          {selectedCandidate.commentMngNames.map((commentName, index) => (
+            <li key={index}>{commentName}</li>
+          ))}
+        </ul>
+              <AddCommentForm candidateId={selectedCandidate._id}/>
 
             </div>
           </div>

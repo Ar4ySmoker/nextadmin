@@ -11,21 +11,46 @@ export type User = {
   email: string;
   password: string;
 };
-
+export type Comment = {
+  commentText: string;
+  date?: Date;
+};
 export type Candidate = {
-  [x: string]: ReactNode;
-  managerName: ReactNode;
-  comment: ReactNode;
-  statusName: ReactNode;
-  langueName: ReactNode;
-  documentName: ReactNode;
-  createdAt: any;
-  professionName: ReactNode;
+  commentMngNames: any;
+  age: ReactNode;
+  professionDescription: ReactNode;
+  drivePermis: ReactNode;
+  leaving: any;
+  commentCand: ReactNode;
+  _id: any;
   id: string;
   name: string;
   phone: string;
-  location: string;
+  locationName?: string;
+  professionName?: string;
+  documentName?: string;
+  managerName?: string;
+  statusName?: string;
+  langueName?: string;
+  createdAt?: Date | string;
+  comments?: Comment[];
 };
+
+// export type Candidate = {
+//   [x: string]: ReactNode;
+//   managerName: ReactNode;
+//   comment: ReactNode;
+//   commentMng: Comment[];
+//   statusName: ReactNode;
+//   langueName: ReactNode;
+//   documentName: ReactNode;
+//   createdAt: any;
+//   professionName: ReactNode;
+//   id: string;
+//   name: string;
+//   phone: string;
+//   location: string;
+// };
 
 export type Invoice = {
   id: string;

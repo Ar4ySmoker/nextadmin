@@ -6,6 +6,7 @@ export const GET  = async()=>{
   try{
     await connectToDB();
     const candidates = await Candidate.find();
+    console.log(candidates)
     return new NextResponse(JSON.stringify(candidates), {status:200})
   }
   catch(error){

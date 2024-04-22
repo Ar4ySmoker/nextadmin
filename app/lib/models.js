@@ -208,7 +208,7 @@ ref: 'Manager'
 { timestamps: true }
 )
 const commentMngSchema = new mongoose.Schema({
-  comment: {
+  commentText: {
     type: String,
     required: true
   }

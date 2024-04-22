@@ -83,3 +83,21 @@ width: 100%;
   gap: 1em;
   background-color: #5d57c9;
 }
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #2e374a;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.input {
+  background-color: transparent;
+  border: none;
+  color: var(--text);
+}
+.icons{
+  display: flex;
+  gap: 20px;
+}
