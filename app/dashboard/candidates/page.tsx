@@ -44,18 +44,17 @@ function CandidatesPage() {
   useEffect(() => {
     async function fetchDataFromApi() {
       try {
-        const endpoints = ["candidates", "profession", "locations", "document", "manager", "status", "langue", "commentMng"];
+        const endpoints = ["candidates", "profession", "locations",  "manager", "status", "langue", "commentMng"];
         const baseUrl = "http://localhost:3000/api/";
         const responses = await Promise.all(endpoints.map(endpoint => fetch(baseUrl + endpoint)));
         if (responses.some(response => !response.ok)) {
           throw new Error('Failed to fetch some endpoints');
         }
         const data = await Promise.all(responses.map(response => response.json()));
-        const [candidates, profession, locations, document, manager, status, langue, commentMng] = data;
+        const [candidates, profession, locations,  manager, status, langue, commentMng] = data;
 
         const locationMap = Object.fromEntries(locations.map(loc => [loc._id, loc.name]));
         const professionMap = Object.fromEntries(profession.map(prof => [prof._id, { name: prof.name, description: prof.description }]));
-        const documentMap = Object.fromEntries(document.map(dcm => [dcm._id, dcm.name]));
         const managerMap = Object.fromEntries(manager.map(mng => [mng._id, mng.name]));
         const statusMap = Object.fromEntries(status.map(st => [st._id, st.name]));
         const langueMap = Object.fromEntries(langue.map(lng => [lng._id, lng.name]));
@@ -66,7 +65,6 @@ function CandidatesPage() {
           locationName: locationMap[candidate.locations],
           professionName: professionMap[candidate.profession]?.name || "Без профессии",
           professionDescription: professionMap[candidate.profession]?.description || "Нет описания",
-          documentName: documentMap[candidate.document] || "Не заполнено",
           managerName: managerMap[candidate.manager] || "Без менеджера",
           statusName: statusMap[candidate.status] || "Не обработан",
           langueName: langueMap[candidate.langue] || "Не знает",
@@ -185,7 +183,11 @@ function CandidatesPage() {
               <p><strong>Описание:</strong> {selectedCandidate.professionDescription}</p>
               <p><strong>Город:</strong> {selectedCandidate.locationName}</p>
               <p><strong>Добавлен:</strong> {typeof selectedCandidate.createdAt === 'string' ? selectedCandidate.createdAt.substring(0, 10) : 'Неизвестно'}</p>
-              <p><strong>Документы:</strong> {selectedCandidate.documentName}</p>
+              {selectedCandidate.documents && selectedCandidate.documents.map((doc, index) => (
+                <p key={index}>
+                  <strong>{doc.docType}:</strong> № {doc.numberDoc}, действует до {doc.dateExp}
+                </p>
+              ))}
               <p><strong>Статус:</strong> {selectedCandidate.statusName}</p>
               <p><strong>Язык:</strong> {selectedCandidate.langueName}</p>
               <p><strong>Водительское Удостоверение:</strong> {selectedCandidate.drivePermis}</p>

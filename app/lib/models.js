@@ -179,10 +179,11 @@ type: String,
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Profession'
   },
-  document: { 
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Document'
-  },
+  documents: [{ 
+    docType: String,
+    dateExp: String,
+    numberDoc: String
+  }],
   langue:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Langue'

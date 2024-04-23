@@ -1,14 +1,28 @@
 'use client'
+import React, { useState } from 'react';
 import styles from "@/app/ui/dashboard/users/addUser/addUser.module.css";
 
+export default function Form({ professions, locations, langue, status, manager }) {
+  const [documentEntries, setDocumentEntries] = useState([]);
 
-export default function Form({ professions, locations, documents, langue, status, manager }) {
-  
+  const addDocumentEntry = () => {
+    setDocumentEntries([...documentEntries, { docType: '', dateExp: '', numberDoc: '' }]);
+  };
+
+  const handleDocumentChange = (index, field, value) => {
+    const newEntries = [...documentEntries];
+    newEntries[index] = { ...newEntries[index], [field]: value };
+    setDocumentEntries(newEntries);
+  };
+
+  const removeDocumentEntry = (index) => {
+    const newEntries = documentEntries.filter((_, i) => i !== index);
+    setDocumentEntries(newEntries);
+  };
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Предотвращение стандартного поведения формы
-  
-    // Создание объекта FormData и получение данных из формы
+    event.preventDefault();
+    console.log('Submitting with documents:', documentEntries);
     const formData = new FormData(event.target);
     const body = {
       name: formData.get('name'),
@@ -16,7 +30,7 @@ export default function Form({ professions, locations, documents, langue, status
       phone: formData.get('phone'),
       profession: formData.get('profession'),
       locations: formData.get('locations'),
-      document: formData.get('document'),
+      documents: documentEntries,
       experience: formData.get('experience'),
       drivePermis: formData.get('drivePermis'),
       leaving: formData.get('leaving'),
@@ -27,289 +41,81 @@ export default function Form({ professions, locations, documents, langue, status
       manager: formData.get('manager'),
       comment: formData.get('comment')
     };
-  
+
     try {
-      // Отправка данных на ваш API-роут
       const response = await fetch('/api/addCandidate', { 
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
       });
-  
       const result = await response.json();
-  console.log("response", response)
       if (response.ok) {
         console.log('User created:', result);
-        
-        // Обработка успешного создания пользователя, например, очистка формы или сообщение пользователю
       } else {
         console.error('Failed to create user:', result);
-        // Обработка ошибок, например, вывод сообщения об ошибке
       }
     } catch (error) {
       console.error('Network error:', error);
-      // Обработка сетевых ошибок
     }
   };
-  
+
   return (
     <div className={styles.container}>
       <form onSubmit={handleSubmit} className={styles.form}>
-      <input  id="name"
-                name="name"
-                type="text"
-                placeholder="Иван Иванович Пых" required />
-      <input  id="age"
-                name="age"
-                type="text"
-                placeholder="Возраст"  />
-      <input
-                      id="phone"
-                      name="phone"
-                      type="text"
-                      placeholder="+373696855446"
-          required
-        />
-<select
-              id="profession"
-              name="profession"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue=""
-              aria-describedby="profession-error"
-            >
-              
-              {professions.map((profession) => (
-                <option key={profession._id} value={profession._id}>
-                  {profession.name}
-                </option>
-              ))}
+        <input id="name" name="name" type="text" placeholder="Имя кандидата" required />
+        <input id="age" name="age" type="text" placeholder="Возраст" />
+        <input id="phone" name="phone" type="text" placeholder="+373696855446" required />
+        
+        <select id="profession" name="profession">
+          {professions.map(profession => (
+            <option key={profession._id} value={profession._id}>{profession.name}</option>
+          ))}
+        </select>
+
+        <select id="locations" name="locations">
+          {locations.map(location => (
+            <option key={location._id} value={location._id}>{location.name}</option>
+          ))}
+        </select>
+
+        {documentEntries.map((doc, index) => (
+          <div key={index}>
+            <select value={doc.docType} onChange={e => handleDocumentChange(index, 'docType', e.target.value)}>
+              <option value="Виза">Виза</option>
+              <option value="Песель">Песель</option>
+              <option value="Паспорт">Паспорт</option>
+              <option value="Карта побыту">Карта побыту</option>
             </select>
-            <input  id="experience"
-                name="experience"
-                type="text"
-                placeholder="Опыт работы по професии"  />  
-          <input  id="drivePermis"
-                name="drivePermis"
-                type="text"
-                placeholder="Категории В/У в наличии"  />                         
-          <input  id="leaving"
-                name="leaving"
-                type="date"
-                 /> 
-          <input  id="workHours"
-                name="workHours"
-                type="text"
-                placeholder="Часы отработки"
-                 />                  
-         <select
-              id="locations"
-              name="locations"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue=""
-              aria-describedby="location-error"
-            >
-              
-              {locations.map((locations) => (
-                <option key={locations._id} value={locations._id}>
-                  {locations.name}
-                </option>
-              ))}
-            </select>
-            <select
-              id="document"
-              name="document"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue=""
-              aria-describedby="document-error"
-            >
-              
-              {documents.map((document) => (
-                <option key={document._id} value={document._id}>
-                  {document.name}
-                </option>
-              ))}
-            </select>  
-            <select
-              id="langue"
-              name="langue"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue=""
-              aria-describedby="langue-error"
-            >
-              
-              {langue.map((langue) => (
-                <option key={langue._id} value={langue._id}>
-                  {langue.name}
-                </option>
-              ))}
-            </select>   
-            <select
-              id="status"
-              name="status"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue=""
-              aria-describedby="status-error"
-            >
-              
-              {status.map((status) => (
-                <option key={status._id} value={status._id}>
-                  {status.name}
-                </option>
-              ))}
-            </select>  
-            <select
-              id="manager"
-              name="manager"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue=""
-              aria-describedby="manager-error"
-            >
-              
-              {manager.map((manager) => (
-                <option key={manager._id} value={manager._id}>
-                  {manager.name}
-                </option>
-              ))}
-            </select> 
-            <input  id="cardNumber"
-                name="cardNumber"
-                type="text"
-                placeholder="Номер счёта"
-                 /> 
-            <textarea  id="comment"
-                name="comment"
-                
-                placeholder="Оставьте комментарий"
-                 />  
+            <input type="date" value={doc.dateExp} onChange={e => handleDocumentChange(index, 'dateExp', e.target.value)} />
+            <input type="text" value={doc.numberDoc} onChange={e => handleDocumentChange(index, 'numberDoc', e.target.value)} />
+            <button type="button" onClick={() => removeDocumentEntry(index)}>Удалить</button>
+          </div>
+        ))}
+        <button type="button" onClick={addDocumentEntry}>Добавить документ</button>
+
+        <select id="langue" name="langue">
+          {langue.map(l => (
+            <option key={l._id} value={l._id}>{l.name}</option>
+          ))}
+        </select>
+
+        <select id="status" name="status">
+          {status.map(s => (
+            <option key={s._id} value={s._id}>{s.name}</option>
+          ))}
+        </select>
+
+        <select id="manager" name="manager">
+          {manager.map(m => (
+            <option key={m._id} value={m._id}>{m.name}</option>
+          ))}
+        </select>
+        
+        <input id="cardNumber" name="cardNumber" type="text" placeholder="Номер счёта" />
+        <textarea id="comment" name="comment" placeholder="Комментарий" />
+
         <button type="submit">Добавить кандидата</button>
       </form>
     </div>
   );
 }
-// export default function Form({ 
-//   professions,
-//   locations,
-//   documents,
-//   langue,
-//   status,
-//   manager,
-//   }: { 
-//   locations: LocationField[], 
-//   professions: ProfessionField[],
-//   documents: DocumentField[],
-//   langue: LocationField[],
-//   status: StatusField[],
-//   manager: ManagerField[],
-// }) {
-//   console.log("Locations:", locations);
-//   console.log("Professions:", professions);
-//   console.log("Documents:",documents );
-//   console.log("Langue:",langue);
-//   console.log("Managers:", manager)
-//   console.log("Status:", status);
-//   return (
-//     <div className={styles.container}>
-//       <form action={addCandidate} className={styles.form}>
-//         <input  id="name"
-//                 name="name"
-//                 type="text"
-//                 placeholder="Иван Иванович Пых" required />
-//         <input
-//                       id="phone"
-//                       name="phone"
-//                       type="text"
-//                       placeholder="+373696855446"
-//           required
-//         />
-// <select
-//               id="profession"
-//               name="profession"
-//               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-//               defaultValue=""
-//               aria-describedby="profession-error"
-//             >
-              
-//               {professions.map((profession) => (
-//                 <option key={profession._id} value={profession._id}>
-//                   {profession.name}
-//                 </option>
-//               ))}
-//             </select>
-
-//          <select
-//               id="location"
-//               name="location"
-//               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-//               defaultValue=""
-//               aria-describedby="location-error"
-//             >
-              
-//               {locations.map((location) => (
-//                 <option key={location._id} value={location._id}>
-//                   {location.name}
-//                 </option>
-//               ))}
-//             </select>
-//             <select
-//               id="document"
-//               name="document"
-//               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-//               defaultValue=""
-//               aria-describedby="document-error"
-//             >
-              
-//               {documents.map((document) => (
-//                 <option key={document._id} value={document._id}>
-//                   {document.name}
-//                 </option>
-//               ))}
-//             </select>  
-//             <select
-//               id="langue"
-//               name="langue"
-//               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-//               defaultValue=""
-//               aria-describedby="langue-error"
-//             >
-              
-//               {langue.map((langue) => (
-//                 <option key={langue._id} value={langue._id}>
-//                   {langue.name}
-//                 </option>
-//               ))}
-//             </select>   
-//             <select
-//               id="status"
-//               name="status"
-//               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-//               defaultValue=""
-//               aria-describedby="status-error"
-//             >
-              
-//               {status.map((status) => (
-//                 <option key={status._id} value={status._id}>
-//                   {status.name}
-//                 </option>
-//               ))}
-//             </select>  
-//             <select
-//               id="manager"
-//               name="manager"
-//               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-//               defaultValue=""
-//               aria-describedby="manager-error"
-//             >
-              
-//               {manager.map((manager) => (
-//                 <option key={manager._id} value={manager._id}>
-//                   {manager.name}
-//                 </option>
-//               ))}
-//             </select> 
-//         <button type="submit">Добавить кандидата</button>
-//       </form>
-//     </div>
-//   );
-// }

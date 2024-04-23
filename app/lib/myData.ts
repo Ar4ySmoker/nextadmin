@@ -1,5 +1,5 @@
-import { LocationField, ProfessionField, DocumentField, LangueField, ManagerField, StatusField } from "./definitions";
-import {  Location, Profession, Document, Langue, Manager, Status } from "./models";
+import { LocationField, ProfessionField, LangueField, ManagerField, StatusField } from "./definitions";
+import {  Location, Profession,  Langue, Manager, Status } from "./models";
 import { connectToDB } from "./utils";
 
 
@@ -79,25 +79,4 @@ export const fetchProfession = async (): Promise<ProfessionField[]> => {
         throw new Error("Failed to fetch Profession!");
     }
 };
-
-export const fetchDocument = async (): Promise<DocumentField[]> => {
-    try {
-         await connectToDB(); // Добавлен await для гарантии асинхронного подключения
-        console.log("Connected to db Document");
-        console.log(`${Document.modelName}`)
-        const documents = await Document.find({}, 'name').lean();
-        return documents.map(document => ({
-            _id: document._id.toString(), // Преобразование _id в строку
-            name: document.name,
-            dateExp: document.dateExp, // Убедитесь, что поле description существует в модели
-            numberDoc: document.numberDoc,
-        }));
-    } catch (err) {
-        console.log(err);
-        throw new Error("Failed to fetch Document!");
-    }
-};
-
-
-
 
