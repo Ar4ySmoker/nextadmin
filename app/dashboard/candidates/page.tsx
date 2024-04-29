@@ -3,11 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from "@/app/ui/dashboard/users/users.module.css";
 import Link from "next/link";
-// import { deleteCandidate } from "@/app/lib/myAction";
-import { Candidate } from '@/app/lib/definitions';
 import { AddCommentForm } from '@/app/ui/dashboard/AddCommentForm/AddCommentForm';
-import WebSocket from 'isomorphic-ws';
-export async function deleteCandidate(candidateId: string): Promise<Response> {
+async function deleteCandidate(candidateId: string): Promise<Response> {
   const response = await fetch(`/api/deleteCandidate/route?candidateId=${candidateId}`, {
     method: 'DELETE',
   });
@@ -18,28 +15,8 @@ function CandidatesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [ws, setWs] = useState(null);
 
-  useEffect(() => {
-    // Установите соединение с WebSocket при монтировании компонента
-    const websocket = new WebSocket('ws://localhost:3001');
-    setWs(websocket);
 
-    websocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      // Предполагаем, что сообщение содержит информацию об обновлении комментариев
-      if (data.type === 'NEW_COMMENT' && selectedCandidate && selectedCandidate._id === data.data.candidateId) {
-        setSelectedCandidate(prev => ({
-          ...prev,
-          commentMngNames: [...prev.commentMngNames, data.data.commentText]
-        }));
-      }
-    };
-
-    return () => {
-      websocket.close();
-    };
-  }, [selectedCandidate]);
 
   useEffect(() => {
     async function fetchDataFromApi() {

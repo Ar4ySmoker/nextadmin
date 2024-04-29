@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server';
 import { connectToDB } from '@/app/lib/utils';
 import { Candidate, CommentMng } from '@/app/lib/models';
-import WebSocket from 'ws';
 
 // Предполагается, что WebSocket сервер уже запущен на другом порту
-const ws = new WebSocket('ws://localhost:3001');
 
-export const config = {
-  runtime: 'experimental-edge',
-};
 
 export const POST = async (request: Request) => {
   try {
@@ -22,10 +17,7 @@ export const POST = async (request: Request) => {
       $push: { commentMng: newComment._id }
     });
 
-    // Отправка обновления через WebSocket
-    ws.on('open', function open() {
-      ws.send(JSON.stringify({ type: 'NEW_COMMENT', data: newComment }));
-    });
+  
 
     return new NextResponse(
       JSON.stringify({ message: "Comment added successfully", comment: newComment }),

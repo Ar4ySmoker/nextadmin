@@ -14,7 +14,6 @@ async function getData() {
     const professionsRes = await fetch("http://localhost:3000/api/profession")
     const managerRes = await fetch("http://localhost:3000/api/manager")
     const statusRes = await fetch("http://localhost:3000/api/status")
-    const langueRes = await fetch("http://localhost:3000/api/langues")
 
     if (!candidatesRes.ok || !locationsRes.ok || !professionsRes.ok) return notFound();
 
